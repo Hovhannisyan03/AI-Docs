@@ -15,7 +15,6 @@ public:
 
 public:
     DrawingCanvas(QWidget *parent);
-    ~Drawing();
 private slots:
     //void paintEvent(QPaintEvent *event);
     void paintLine();
