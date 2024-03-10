@@ -1,51 +1,72 @@
+// drawingwidget.cpp
 #include "drawing.h"
-
-
-DrawingCanvas::DrawingCanvas(QWidget *parent) : QWidget(parent), currentTool(Tool::Line)
+#include <QPushButton>
+DrawingWidget::DrawingWidget(QWidget *parent) : QWidget(parent)
 {
     resize(800, 600);
 
+    currentShape = Line;
     QPushButton *lineButton = new QPushButton("Line", this);
     lineButton->setGeometry(10, 10, 80, 30);
 
     QPushButton *rectButton = new QPushButton("Rectangle", this);
     rectButton->setGeometry(100, 10, 80, 30);
 
-    connect(lineButton, &QPushButton::clicked, this, DrawingCanvas::paintLine);
-    connect(rectButton, &QPushButton::clicked, this, DrawingCanvas::paintRectangle);
+    connect(lineButton, &QPushButton::clicked, this, [=]() {setShape(Line);});
+    connect(rectButton, &QPushButton::clicked, this, [=]() {setShape(Rectangle);});
+    setMouseTracking(true);
 }
 
-void DrawingCanvas::paintLine()
+void DrawingWidget::setShape(ShapeType shape)
 {
-    currentTool = Tool::Line;
+    currentShape = shape;
+}
 
-    QPainter *painter = new QPainter(this);
-    painter->setPen(Qt::black);
+void DrawingWidget::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+    painter.setPen(Qt::black);
+    for (const auto &rect : rectangles)
+        painter.drawRect(rect);
 
     for (const auto &line : lines)
-    {
-        painter->drawLine(line);
-    }
-
-    painter->drawLine(startPoint, endPoint);
-
+        painter.drawLine(line);
 }
 
-void DrawingCanvas::paintRectangle()
+void DrawingWidget::mousePressEvent(QMouseEvent *event)
 {
-    currentTool = Tool::Rectangle;
-
-    QPainter *painter = new QPainter(this);
-    painter->setPen(Qt::black);
-
-    for (const auto &rect : rectangles)
+    if (event->button() == Qt::LeftButton)
     {
-        painter->drawRect(rect);
+        startPoint = event->pos();
     }
-
-    QRect currentRect(startPoint, endPoint);
-    painter->drawRect(currentRect.normalized());
 }
 
+void DrawingWidget::mouseMoveEvent(QMouseEvent *event)
+{
+    if (event->buttons() & Qt::LeftButton)
+    {
+        endPoint = event->pos();
+        update();
+    }
+}
 
+void DrawingWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
+        endPoint = event->pos();
 
+        if (currentShape == Rectangle)
+        {
+            QRect rect(startPoint, endPoint);
+            rectangles.push_back(rect);
+        }
+        else if (currentShape == Line)
+        {
+            QLine line(startPoint, endPoint);
+            lines.push_back(line);
+        }
+
+        update();
+    }
+}
