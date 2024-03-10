@@ -24,7 +24,6 @@ private slots:
     void ClearLine();
     void equalClicked();
     void onOperatorClicked();
-    //void numberFunction();
 private:
     Ui::MainWindow *ui;
     QLineEdit *display;
@@ -33,4 +32,4 @@ private:
     QString buffer;
     double result;
 };
-#endif // MAINWINDOW_H
+#endif
