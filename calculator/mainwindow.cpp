@@ -32,7 +32,6 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             QPushButton *button = new QPushButton(buttons[position]);
             gridLayout->addWidget(button, i, j);
             ++position;
-            //QPushButton *buttonCl = qobject_cast<QPushButton*>(sender());
             if(button->text() == "C")
             {
                 button->setStyleSheet("background-color: red; color: white");
