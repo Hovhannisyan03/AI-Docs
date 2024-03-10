@@ -1,51 +1,34 @@
-#ifndef DRAWING_H
-#define DRAWING_H
+#ifndef DRAWINGWIDGET_H
+#define DRAWINGWIDGET_H
 
-#include <QApplication>
 #include <QWidget>
 #include <QPainter>
 #include <QMouseEvent>
-#include <QPushButton>
+#include <vector>
 
-class DrawingCanvas : public QWidget {
+class DrawingWidget : public QWidget
+{
     Q_OBJECT
-public:
-    enum class Tool { Line, Rectangle };
-    Tool currentTool;
 
 public:
-    DrawingCanvas(QWidget *parent);
-private slots:
-    //void paintEvent(QPaintEvent *event);
-    void paintLine();
-    void paintRectangle();
+    explicit DrawingWidget(QWidget *parent = nullptr);
+
+    enum ShapeType { Line, Rectangle };
+
+    void setShape(ShapeType shape);
+
+protected:
+    void paintEvent(QPaintEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+
 private:
+    std::vector<QRect> rectangles;
+    std::vector<QLine> lines;
     QPoint startPoint;
     QPoint endPoint;
-    QVector<QRect> rectangles;
-    QVector<QLine> lines;
-
-    void mousePressEvent(QMouseEvent *event) override{
-        startPoint = event->pos();
-    }
-
-    void mouseMoveEvent(QMouseEvent *event) override{
-        endPoint = event->pos();
-        update();
-    }
-
-    void mouseReleaseEvent(QMouseEvent *event) override{
-        endPoint = event->pos();
-        if (currentTool == Tool::Rectangle) {
-            QRect rect(startPoint, endPoint);
-            rectangles.append(rect.normalized());
-        }
-        else if (currentTool == Tool::Line) {
-            QLine line(startPoint, endPoint);
-            lines.append(line);
-        }
-        update();
-    }
+    ShapeType currentShape;
 };
 
-#endif // DRAWING_H
+#endif
