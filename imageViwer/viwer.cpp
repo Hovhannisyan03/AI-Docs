@@ -64,7 +64,6 @@ void viewer::rotate()
 
 void viewer::createMenu()
 {
-    QMenuBar *menuBar;
     _open = new QAction("&Open", this);
     _zoomIn = new QAction("Zoom &In", this);
     _zoomOut = new QAction("Zoom &Out", this);
@@ -78,8 +77,8 @@ void viewer::createMenu()
     viewMenu->addAction(_zoomOut);
     viewMenu->addAction(_rotate);
 
-    menuBar->addMenu(fmenu);
-    menuBar->addMenu(viewMenu);
+    menuBar()->addMenu(fmenu);
+    menuBar()->addMenu(viewMenu);
 }
 void viewer::connections()
 {
